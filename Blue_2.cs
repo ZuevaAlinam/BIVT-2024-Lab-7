@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 
 
@@ -109,7 +109,7 @@ namespace Lab_7
             public string Name { get; private set; }
             public int Bank { get; private set; }
             public Participant[] Participants { get; private set; }
-            public abstract double Prize(Participant[] participants);
+            public abstract double Prize { get; }
 
             public WaterJump(string name, int bank)
             {
@@ -139,61 +139,67 @@ namespace Lab_7
             }
         }
 
-        public abstract class WaterJump3m : WaterJump
+        public class WaterJump3m : WaterJump
         {
             public WaterJump3m(string name, int bank) : base(name, bank) { }
 
-            public override double Prize(Participant[] participants)
+            public override double Prize
             {
-
-                double itog = 0;
-                double[] prizes = new double[3];
-                if (participants.Length < 3) return 0;
-                else
+                get
                 {
-                    for (int i = 0; i < prizes.Length; i++) {
-                        switch (i)
+                    double itog = 0;
+                    double[] prizes = new double[3];
+                    if (Participants.Length < 3) return 0;
+                    else
+                    {
+                        for (int i = 0; i < prizes.Length; i++)
                         {
-                            case 0: prizes[i] = 0.5 * Bank; break;
-                            case 1: prizes[i] = 0.3* Bank; break;
-                            case 2: prizes[i] = 0.2* Bank; break;
-                            default: break;
+                            switch (i)
+                            {
+                                case 0: prizes[i] = 0.5 * Bank; break;
+                                case 1: prizes[i] = 0.3 * Bank; break;
+                                case 2: prizes[i] = 0.2 * Bank; break;
+                                default: break;
+                            }
+                            itog += prizes[i];
                         }
-                        itog += prizes[i];
                     }
+                    return itog;
                 }
-                return itog;
             }
 
         }
-        public abstract class WaterJump5m: WaterJump
+        public class WaterJump5m: WaterJump
         {
             public WaterJump5m(string name, int bank) : base(name, bank) { }
 
-            public override double Prize(Participant[] participants)
+            public override double Prize
             {
-                double itog = 0;
-                int n = participants.Length/2;
-                double[] prizes = new double[n];
-                if (participants.Length < 3 || n<3 || n>10) return 0;
-               
-                else
+                get
                 {
-                    n = 20 / n;
-                    for (int i = 0; i < prizes.Length; i++)
-                    {
-                        switch (i)
-                        {
-                            case 0: prizes[i] = 0.4 * Bank+n/100*Bank; break;
-                            case 1: prizes[i] = 0.25 * Bank + n / 100 * Bank; break;
-                            case 2: prizes[i] = 0.15 * Bank + n / 100 * Bank; break;
-                            default: prizes[i] = n / 100 * Bank; break;
-                        }
-                        itog += prizes[i];
-                    }
+                    double itog = 0;
+                    int n = Participants.Length / 2;
+                    double[] prizes = new double[n];
+                    if (Participants.Length < 3 || n < 3 || n > 10) return 0;
 
+                    else
+                    {
+                        n = 20 / n;
+                        for (int i = 0; i < prizes.Length; i++)
+                        {
+                            switch (i)
+                            {
+                                case 0: prizes[i] = 0.4 * Bank + n / 100 * Bank; break;
+                                case 1: prizes[i] = 0.25 * Bank + n / 100 * Bank; break;
+                                case 2: prizes[i] = 0.15 * Bank + n / 100 * Bank; break;
+                                default: prizes[i] = n / 100 * Bank; break;
+                            }
+                            itog += prizes[i];
+                        }
+
+                    }
+                    return itog;
                 }
-                return itog;
             }
         }
     }
