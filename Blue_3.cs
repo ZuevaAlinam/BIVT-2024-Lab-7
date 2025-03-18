@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 
 namespace Lab_7
@@ -102,7 +102,7 @@ namespace Lab_7
 
         public class BasketballPlayer : Participant
         {
-            
+
             public BasketballPlayer(string name, string surname) : base(name, surname) { }
             public override void PlayMatch(int fall)
             {
@@ -128,6 +128,7 @@ namespace Lab_7
                     }
                 }
             }
+        }
             public class HockeyPlayer : Participant
             {
                 private Participant[] _hockeyPlayers;
@@ -153,6 +154,6 @@ namespace Lab_7
                 }
             }
 
-        }
+        
     }
 }
