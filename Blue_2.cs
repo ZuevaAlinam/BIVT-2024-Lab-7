@@ -109,7 +109,7 @@ namespace Lab_7
             public string Name { get; private set; }
             public int Bank { get; private set; }
             public Participant[] Participants { get; private set; }
-            public abstract double Prize { get; }
+            public abstract double[] Prize { get; }
 
             public WaterJump(string name, int bank)
             {
@@ -143,13 +143,13 @@ namespace Lab_7
         {
             public WaterJump3m(string name, int bank) : base(name, bank) { }
 
-            public override double Prize
+            public override double[] Prize
             {
                 get
                 {
-                    double itog = 0;
+                    
                     double[] prizes = new double[3];
-                    if (Participants.Length < 3) return 0;
+                    if (Participants.Length < 3) return null;
                     else
                     {
                         for (int i = 0; i < prizes.Length; i++)
@@ -161,10 +161,10 @@ namespace Lab_7
                                 case 2: prizes[i] = 0.2 * Bank; break;
                                 default: break;
                             }
-                            itog += prizes[i];
+                           
                         }
                     }
-                    return itog;
+                    return prizes;
                 }
             }
 
@@ -173,14 +173,14 @@ namespace Lab_7
         {
             public WaterJump5m(string name, int bank) : base(name, bank) { }
 
-            public override double Prize
+            public override double[] Prize
             {
                 get
                 {
-                    double itog = 0;
+                    
                     int n = Participants.Length / 2;
                     double[] prizes = new double[n];
-                    if (Participants.Length < 3 || n < 3 || n > 10) return 0;
+                    if (Participants.Length < 3 || n < 3 || n > 10) return null;
 
                     else
                     {
@@ -194,11 +194,11 @@ namespace Lab_7
                                 case 2: prizes[i] = 0.15 * Bank + n / 100 * Bank; break;
                                 default: prizes[i] = n / 100 * Bank; break;
                             }
-                            itog += prizes[i];
+                            
                         }
 
                     }
-                    return itog;
+                    return prizes;
                 }
             }
         }
