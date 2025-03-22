@@ -69,7 +69,7 @@ namespace Lab_7
 
             public virtual void PlayMatch(int time)
             {
-                if (_penalty == null) return;
+                if (_penalty == null) _penalty = new int[0];
                 int[] newar = new int[_penalty.Length + 1];
                 for (int i = 0; i < _penalty.Length; i++)
                     newar[i] = _penalty[i];
@@ -113,7 +113,7 @@ namespace Lab_7
             {
                 get
                 {
-                    if (_penalty == null) return false;
+                    if (_penalty == null || _penalty.Length==0) return false;
                     else
                     {
                         int cntOfFalls = 0;
@@ -140,7 +140,7 @@ namespace Lab_7
                 {
                     get
                     {
-                        if (_hockeyPlayers == null) return false;
+                        if (_hockeyPlayers == null || _hockeyPlayers.Length==0) return false;
                         bool firstPart = base.IsExpelled;
                         int sumOfHockeyPlayers = 0;
                         foreach (var player in _hockeyPlayers) {
