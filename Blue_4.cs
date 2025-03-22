@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 
 namespace Lab_7
@@ -89,16 +89,16 @@ namespace Lab_7
             public void Add(Team team)
             {
                 if (ManTeams == null || WomanTeams == null) return;
-                if (team is ManTeam manTeam && _Manindex < 12)
+                if (team is ManTeam manTeam && _Manindex < ManTeams.Length)
                     ManTeams[_Manindex++] = team;
-                if (team is WomanTeam womanTeam && _Womanindex < 12)
+                if (team is WomanTeam womanTeam && _Womanindex < WomanTeams.Length)
                     ManTeams[_Womanindex++] = team;
             }
             public void Add(Team[] teams)
             {
                 if (ManTeams == null|| WomanTeams == null || teams==null) return;
                 
-                for (int i = 0; i < 12; i++) { 
+                for (int i = 0; i < teams.Length; i++) { 
                    Add(teams[i]);
                 }
                
@@ -126,51 +126,45 @@ namespace Lab_7
 
             public static Group Merge(Group group1, Group group2, int size)
             {
-                if (group1 == null || group2 == null) return default(Group);
-                if (size <= 0) return default(Group);
+                
 
                 Group final = new Group("Финалисты");
-                group1.Sort();
-                group2.Sort();
+                
 
-                MergeTEams(group1.ManTeams, group2.ManTeams, final, size/2);
-                MergeTEams(group1.WomanTeams, group2.WomanTeams, final, size / 2);
+                MergeTeams(group1.ManTeams, group2.ManTeams, final.ManTeams, size/2);
+                MergeTeams(group1.WomanTeams, group2.WomanTeams, final.WomanTeams, size / 2);
 
                 return final;
             }
-            public static void MergeTEams(Team[] team1, Team[] team2, Group finalGroup, int size)
+            public static void MergeTeams(Team[] team1, Team[] team2, Team[] finalGroup, int size)
             {
                 
                 
-                int index1 = 0, index2 = 0;
+                int index1 = 0, index2 = 0, itog=0;
 
                 while (index1 < size/2 && index2< size/2)
                 {
                     if (team1[index1].TotalScore >= team2[index2].TotalScore)
                     {
-                        finalGroup.Add(team1[index1]);
-                        index1++;
+                        finalGroup[itog++] = team1[index1++];
                     }
                     else
                     {
-                        finalGroup.Add(team2[index2]);
-                        index2++;
+                        finalGroup[itog++] = team2[index2++];
                     }
                     
                 }
 
                 while (index1<size/2)
                 {
-                    finalGroup.Add(team1[index1]);
-                    index1++;
-                    
+                    finalGroup[itog++] = team1[index1++];
+
                 }
 
                 while (index2<size/2)
                 {
-                    finalGroup.Add(team2[index2]);
-                    index2++;
-                    
+                    finalGroup[itog++] = team2[index2++];
+
                 }
 
             }
