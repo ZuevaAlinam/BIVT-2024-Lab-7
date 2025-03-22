@@ -115,23 +115,22 @@ namespace Lab_7
             {
                 Name = name;
                 Bank = bank;
-                Participants = new Participant[0];
+                Participants = new Participant[100];
                 _index = 0;
             }
 
             public void Add(Participant participant)
             {
-                if (Participants == null) return;
-                if (_index < 100)
-                {
+                if (Participants == null || _index>=Participants.Length) return;
+                
                     Participants[_index++] = participant;
-                }
+                
             }
             public void Add(Participant[] participants)
             {
                 if (Participants == null || participants == null) return;
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < participants.Length; i++)
                 {
                     Add(participants[i]);
                 }
