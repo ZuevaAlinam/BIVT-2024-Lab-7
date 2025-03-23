@@ -132,9 +132,14 @@ namespace Lab_7
 
                 for (int i = 0; i < participants.Length; i++)
                 {
+                    if (_index >= Participants.Length) break;
                     Add(participants[i]);
                 }
 
+            }
+            public int GetIndex()
+            {
+                return _index;
             }
         }
 
@@ -146,23 +151,13 @@ namespace Lab_7
             {
                 get
                 {
-                    
+                    int count = GetIndex();
+                    if (count < 3) return null;
                     double[] prizes = new double[3];
                     if (Participants.Length < 3) return null;
-                    else
-                    {
-                        for (int i = 0; i < prizes.Length; i++)
-                        {
-                            switch (i)
-                            {
-                                case 0: prizes[i] = 0.5 * Bank; break;
-                                case 1: prizes[i] = 0.3 * Bank; break;
-                                case 2: prizes[i] = 0.2 * Bank; break;
-                                default: break;
-                            }
-                           
-                        }
-                    }
+                    prizes[0] = 0.5 * Bank;
+                    prizes[1] = 0.3 * Bank;
+                    prizes[2] = 0.2 * Bank;
                     return prizes;
                 }
             }
@@ -176,7 +171,8 @@ namespace Lab_7
             {
                 get
                 {
-                    
+                    int count = GetIndex();
+                    if (count < 3) return null;
                     int n = Participants.Length / 2;
                     double[] prizes = new double[n];
                     if (Participants.Length < 3 || n < 3 || n > 10) return null;
@@ -184,18 +180,14 @@ namespace Lab_7
                     else
                     {
                         n = 20 / n;
-                        for (int i = 0; i < prizes.Length; i++)
+                        
+                        prizes[0] = 0.4 * Bank + n / 100 * Bank;
+                        prizes[1] = 0.25 * Bank + n / 100 * Bank;
+                        prizes[2] = 0.15 * Bank + n / 100 * Bank;
+                        for (int i = 3; i < n; i++)
                         {
-                            switch (i)
-                            {
-                                case 0: prizes[i] = 0.4 * Bank + n / 100 * Bank; break;
-                                case 1: prizes[i] = 0.25 * Bank + n / 100 * Bank; break;
-                                case 2: prizes[i] = 0.15 * Bank + n / 100 * Bank; break;
-                                default: prizes[i] = n / 100 * Bank; break;
-                            }
-                            
+                            prizes[i] = n / 100 * Bank;
                         }
-
                     }
                     return prizes;
                 }
@@ -203,5 +195,4 @@ namespace Lab_7
         }
     }
 }
-
 
