@@ -90,13 +90,13 @@ namespace Lab_7
             {
                 if (ManTeams == null || WomanTeams == null) return;
                 if (team is ManTeam manTeam && _Manindex < ManTeams.Length)
-                    ManTeams[_Manindex++] = team;
-                if (team is WomanTeam womanTeam && _Womanindex < WomanTeams.Length)
-                    ManTeams[_Womanindex++] = team;
+                    ManTeams[_Manindex++] = manTeam;
+                else if (team is WomanTeam womanTeam && _Womanindex < WomanTeams.Length)
+                    ManTeams[_Womanindex++] = womanTeam;
             }
             public void Add(Team[] teams)
             {
-                if (ManTeams == null|| WomanTeams == null || teams==null) return;
+                if (ManTeams == null|| WomanTeams == null || ManTeams.Length==0 || WomanTeams.Length==0) return;
                 
                 for (int i = 0; i < teams.Length; i++) { 
                    Add(teams[i]);
@@ -142,7 +142,7 @@ namespace Lab_7
                 
                 int index1 = 0, index2 = 0, itog=0;
 
-                while (index1 < size/2 && index2< size/2)
+                while (index1 < size && index2< size)
                 {
                     if (team1[index1].TotalScore >= team2[index2].TotalScore)
                     {
@@ -155,13 +155,13 @@ namespace Lab_7
                     
                 }
 
-                while (index1<size/2)
+                while (index1<size)
                 {
                     finalGroup[itog++] = team1[index1++];
 
                 }
 
-                while (index2<size/2)
+                while (index2<size)
                 {
                     finalGroup[itog++] = team2[index2++];
 
