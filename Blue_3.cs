@@ -1,6 +1,5 @@
 using System;
 
-
 namespace Lab_7
 {
     public class Blue_3
@@ -47,16 +46,13 @@ namespace Lab_7
             {
                 get
                 {
-                    if (_penalty == null)
-                        return false;
-                    bool isExpelled = true;
+                    if (_penalty == null) return false;
                     for (int i = 0; i < _penalty.Length; i++)
+                    {
                         if (_penalty[i] == 10)
-                        {
-                            isExpelled = false;
-                            break;
-                        }
-                    return isExpelled;
+                            return true;
+                    }
+                    return false;
                 }
             }
 
@@ -70,17 +66,17 @@ namespace Lab_7
             public virtual void PlayMatch(int time)
             {
                 if (_penalty == null) _penalty = new int[0];
+                if (time < 0) return;
+
                 int[] newar = new int[_penalty.Length + 1];
                 for (int i = 0; i < _penalty.Length; i++)
                     newar[i] = _penalty[i];
+                newar[_penalty.Length] = time;
                 _penalty = newar;
-                _penalty[_penalty.Length - 1] = time;
-
             }
 
             public static void Sort(Participant[] array)
             {
-
                 if (array == null) return;
                 for (int i = 0; i < array.Length - 1; i++)
                 {
@@ -102,58 +98,60 @@ namespace Lab_7
 
         public class BasketballPlayer : Participant
         {
-
             public BasketballPlayer(string name, string surname) : base(name, surname) { }
+
             public override void PlayMatch(int fall)
             {
                 if (fall < 0 || fall > 5) return;
                 base.PlayMatch(fall);
             }
+
             public override bool IsExpelled
             {
                 get
                 {
-                    if (_penalty == null || _penalty.Length==0) return false;
-                    else
-                    {
-                        int cntOfFalls = 0;
-                        for (int i = 0; i < _penalty.Length; i++)
-                        {
-                            if (_penalty[i] == 5) cntOfFalls++;
+                    if (_penalty == null || _penalty.Length == 0) return false;
 
-                        }
-                        bool firstPart = (cntOfFalls / _penalty.Length > 0.1) ? true : false;
-                        bool secondPart = (Total / _penalty.Length == 2) ? true : false;
-                        return firstPart && secondPart;
+                    int cntOfFalls = 0;
+                    for (int i = 0; i < _penalty.Length; i++)
+                    {
+                        if (_penalty[i] == 5) cntOfFalls++;
                     }
+
+                    return (double)cntOfFalls / _penalty.Length > 0.1;
                 }
             }
         }
-            public class HockeyPlayer : Participant
-            {
-                private Participant[] _hockeyPlayers;
-                public Participant[] HockeyPlayers => _hockeyPlayers;
-                public HockeyPlayer(string name, string surname) : base(name, surname) { 
-                    _hockeyPlayers = new Participant[0];
-                }
-                public override bool IsExpelled
-                {
-                    get
-                    {
-                        if (_hockeyPlayers == null || _hockeyPlayers.Length==0) return false;
-                        bool firstPart = base.IsExpelled;
-                        int sumOfHockeyPlayers = 0;
-                        foreach (var player in _hockeyPlayers) {
-                            sumOfHockeyPlayers += player.Total;
-                        }
-                        int totalHockeys = sumOfHockeyPlayers / _hockeyPlayers.Length;
-                        bool secondPart = (Total/totalHockeys> 0.1) ? true : false;
-                        return firstPart && secondPart;
-                    }
 
-                }
+        public class HockeyPlayer : Participant
+        {
+            private Participant[] _hockeyPlayers;
+            public Participant[] HockeyPlayers => _hockeyPlayers;
+
+            public HockeyPlayer(string name, string surname) : base(name, surname)
+            {
+                _hockeyPlayers = new Participant[0];
             }
 
-        
+            public override bool IsExpelled
+            {
+                get
+                {
+                    if (_hockeyPlayers == null || _hockeyPlayers.Length == 0) return false;
+
+                    bool firstPart = base.IsExpelled;
+                    int sumOfHockeyPlayers = 0;
+                    foreach (var player in _hockeyPlayers)
+                    {
+                        sumOfHockeyPlayers += player.Total;
+                    }
+
+                    int totalHockeys = sumOfHockeyPlayers / _hockeyPlayers.Length;
+                    bool secondPart = Total > 0.1 * totalHockeys;
+
+                    return firstPart || secondPart;
+                }
+            }
+        }
     }
 }
