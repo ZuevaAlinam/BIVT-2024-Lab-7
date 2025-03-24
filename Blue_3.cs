@@ -12,33 +12,17 @@ namespace Lab_7
 
             public string Name => _name;
             public string Surname => _surname;
-            public int[] Penalties
-            {
-                get
-                {
-                    if (_penalty == null) return default(int[]);
-                    else
-                    {
-                        int[] penaltyTimes = new int[_penalty.Length];
-                        for (int i = 0; i < penaltyTimes.Length; i++)
-                            penaltyTimes[i] = _penalty[i];
-                        return penaltyTimes;
-                    }
-                }
-            }
+            public int[] Penalties => _penalty?.Clone() as int[];
 
             public int Total
             {
                 get
                 {
                     if (_penalty == null) return 0;
-                    else
-                    {
-                        int totalTime = 0;
-                        for (int i = 0; i < _penalty.Length; i++)
-                            totalTime += _penalty[i];
-                        return totalTime;
-                    }
+                    int total = 0;
+                    foreach (int p in _penalty)
+                        total += p;
+                    return total;
                 }
             }
 
@@ -47,11 +31,8 @@ namespace Lab_7
                 get
                 {
                     if (_penalty == null) return false;
-                    for (int i = 0; i < _penalty.Length; i++)
-                    {
-                        if (_penalty[i] == 10)
-                            return true;
-                    }
+                    foreach (int p in _penalty)
+                        if (p == 10) return true;
                     return false;
                 }
             }
@@ -60,24 +41,21 @@ namespace Lab_7
             {
                 _name = name;
                 _surname = surname;
-                _penalty = new int[0];
+                _penalty = Array.Empty<int>();
             }
 
             public virtual void PlayMatch(int time)
             {
-                if (_penalty == null) _penalty = new int[0];
                 if (time < 0) return;
 
-                int[] newar = new int[_penalty.Length + 1];
-                for (int i = 0; i < _penalty.Length; i++)
-                    newar[i] = _penalty[i];
-                newar[_penalty.Length] = time;
-                _penalty = newar;
+                Array.Resize(ref _penalty, _penalty.Length + 1);
+                _penalty[_penalty.Length - 1] = time;
             }
 
             public static void Sort(Participant[] array)
             {
                 if (array == null) return;
+
                 for (int i = 0; i < array.Length - 1; i++)
                 {
                     for (int j = 0; j < array.Length - i - 1; j++)
@@ -100,10 +78,10 @@ namespace Lab_7
         {
             public BasketballPlayer(string name, string surname) : base(name, surname) { }
 
-            public override void PlayMatch(int fall)
+            public override void PlayMatch(int fouls)
             {
-                if (fall < 0 || fall > 5) return;
-                base.PlayMatch(fall);
+                if (fouls < 0 || fouls > 5) return;
+                base.PlayMatch(fouls);
             }
 
             public override bool IsExpelled
@@ -112,44 +90,44 @@ namespace Lab_7
                 {
                     if (_penalty == null || _penalty.Length == 0) return false;
 
-                    int cntOfFalls = 0;
-                    for (int i = 0; i < _penalty.Length; i++)
+                    int fiveFoulsCount = 0;
+                    foreach (int fouls in _penalty)
                     {
-                        if (_penalty[i] == 5) cntOfFalls++;
+                        if (fouls == 5) fiveFoulsCount++;
                     }
 
-                    return (double)cntOfFalls / _penalty.Length > 0.1;
+                    bool condition1 = (double)fiveFoulsCount / _penalty.Length > 0.1;
+                    bool condition2 = Total > 2 * _penalty.Length;
+
+                    return condition1 || condition2;
                 }
             }
         }
 
         public class HockeyPlayer : Participant
         {
-            private Participant[] _hockeyPlayers;
-            public Participant[] HockeyPlayers => _hockeyPlayers;
+            private static Participant[] _allHockeyPlayers = Array.Empty<Participant>();
 
             public HockeyPlayer(string name, string surname) : base(name, surname)
             {
-                _hockeyPlayers = new Participant[0];
+                Array.Resize(ref _allHockeyPlayers, _allHockeyPlayers.Length + 1);
+                _allHockeyPlayers[_allHockeyPlayers.Length - 1] = this;
             }
 
             public override bool IsExpelled
             {
                 get
                 {
-                    if (_hockeyPlayers == null || _hockeyPlayers.Length == 0) return false;
+                    if (base.IsExpelled) return true;
 
-                    bool firstPart = base.IsExpelled;
-                    int sumOfHockeyPlayers = 0;
-                    foreach (var player in _hockeyPlayers)
-                    {
-                        sumOfHockeyPlayers += player.Total;
-                    }
+                    if (_allHockeyPlayers.Length == 0) return false;
 
-                    int totalHockeys = sumOfHockeyPlayers / _hockeyPlayers.Length;
-                    bool secondPart = Total > 0.1 * totalHockeys;
+                    int totalPenalties = 0;
+                    foreach (var player in _allHockeyPlayers)
+                        totalPenalties += player.Total;
 
-                    return firstPart || secondPart;
+                    double average = (double)totalPenalties / _allHockeyPlayers.Length;
+                    return Total > 0.1 * average;
                 }
             }
         }
