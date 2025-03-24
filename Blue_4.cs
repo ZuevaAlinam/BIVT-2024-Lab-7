@@ -1,5 +1,5 @@
 using System;
-
+using System.Linq;
 
 namespace Lab_7
 {
@@ -8,27 +8,19 @@ namespace Lab_7
         public abstract class Team
         {
             private string _name;
-            private int[] _score;
+            private int[] _scores;
 
-            public string Name=>_name;
-            public int[] Scores
-            {
-                get
-                {
-                    if(_score==null) return default(int[]);
-                    int[] res = new int[_score.Length];
-                    for(int i =0; i < _score.Length; i++) res[i] = _score[i];
-                    return res;
-                }
-            }
+            public string Name => _name;
+            public int[] Scores => _scores?.Clone() as int[];
 
             public int TotalScore
             {
                 get
                 {
-                    if (_score == null) return 0;
+                    if (_scores == null) return 0;
                     int sum = 0;
-                    for(int i = 0; i < _score.Length; i++) sum += _score[i];
+                    foreach (int score in _scores)
+                        sum += score;
                     return sum;
                 }
             }
@@ -36,137 +28,148 @@ namespace Lab_7
             public Team(string name)
             {
                 _name = name;
-                _score = new int[0];
+                _scores = Array.Empty<int>();
             }
 
             public void PlayMatch(int result)
             {
-                if(_score == null) return;
-                int[] newmas = new int[_score.Length+1];
-                for(int i = 0;i < newmas.Length; i++)
-                {
-                    if(i==_score.Length)
-                        newmas[i] = result;
-                    else
-                        newmas[i] = _score[i];
-
-                }
-                _score = newmas;
+                Array.Resize(ref _scores, _scores.Length + 1);
+                _scores[_scores.Length-1] = result;
             }
+
             public void Print()
             {
                 Console.WriteLine("{0,-20}", Name);
             }
-
         }
 
         public class ManTeam : Team
         {
             public ManTeam(string name) : base(name) { }
         }
+
         public class WomanTeam : Team
         {
             public WomanTeam(string name) : base(name) { }
         }
+
         public class Group
         {
             private string _name;
-            
-            private int _Manindex;
-            private int _Womanindex;
+            private Team[] _manTeams;
+            private Team[] _womanTeams;
+            private int _manCount;
+            private int _womanCount;
+
             public string Name => _name;
-            public Team[] ManTeams { get; private set; }
-            public Team[] WomanTeams { get; private set; }
+            public Team[] ManTeams
+            {
+                get
+                {
+                    if (_manTeams == null)
+                        return null;
+                    return _manTeams.Take(_manCount).ToArray();
+                }
+            }
+            public Team[] WomanTeams
+            {
+                get
+                {
+                    if (_womanTeams == null)
+                        return null;
+                    return _womanTeams.Take(_womanCount).ToArray();
+                }
+            }
+
             public Group(string name)
             {
                 _name = name;
-                ManTeams = new Team[12];
-                WomanTeams = new Team[12];
-                _Manindex = 0;
-                _Womanindex = 0;
+                _manTeams = new Team[12];
+                _womanTeams = new Team[12];
+                _manCount = 0;
+                _womanCount = 0;
             }
 
             public void Add(Team team)
             {
-                if (ManTeams == null || WomanTeams == null) return;
-                if (team is ManTeam manTeam && _Manindex < ManTeams.Length)
-                    ManTeams[_Manindex++] = manTeam;
-                else if (team is WomanTeam womanTeam && _Womanindex < WomanTeams.Length)
-                    ManTeams[_Womanindex++] = womanTeam;
+                if (team is ManTeam manTeam && _manCount < _manTeams.Length)
+                {
+                    _manTeams[_manCount++] = manTeam;
+                }
+                else if (team is WomanTeam womanTeam && _womanCount < _womanTeams.Length)
+                {
+                    _womanTeams[_womanCount++] = womanTeam;
+                }
             }
+
             public void Add(Team[] teams)
             {
-                if (ManTeams == null|| WomanTeams == null || ManTeams.Length==0 || WomanTeams.Length==0) return;
-                
-                for (int i = 0; i < teams.Length; i++) { 
-                   Add(teams[i]);
+                if (teams == null) return;
+
+                foreach (Team team in teams)
+                {
+                    Add(team);
                 }
-               
             }
+
             public void Sort()
             {
-                SortTeam(ManTeams);
-                SortTeam(WomanTeams);
+                SortTeam(_manTeams, _manCount);
+                SortTeam(_womanTeams, _womanCount);
             }
-            public void SortTeam(Team[] baseTeam) {
 
-                if (baseTeam == null) return;
-                for (int i = 0; i < baseTeam.Length - 1; i++)
+            private void SortTeam(Team[] teams, int count)
+            {
+                if (teams == null) return;
+
+                for (int i = 0; i < count - 1; i++)
                 {
-                    for (int j = 0; j < baseTeam.Length - i - 1; j++)
+                    for (int j = 0; j < count - i - 1; j++)
                     {
-                        if (baseTeam[j + 1].TotalScore > baseTeam[j].TotalScore)
+                        if (teams[j + 1]?.TotalScore > teams[j]?.TotalScore)
                         {
-                            (baseTeam[j + 1], baseTeam[j]) = (baseTeam[j], baseTeam[j + 1]);
+                            (teams[j + 1], teams[j]) = (teams[j], teams[j + 1]);
                         }
                     }
                 }
-             
             }
 
             public static Group Merge(Group group1, Group group2, int size)
             {
-                
-
                 Group final = new Group("Финалисты");
-                
 
-                MergeTeams(group1.ManTeams, group2.ManTeams, final.ManTeams, size/2);
-                MergeTeams(group1.WomanTeams, group2.WomanTeams, final.WomanTeams, size / 2);
+                MergeTeams(group1.ManTeams, group2.ManTeams, final._manTeams, size / 2, ref final._manCount);
+                MergeTeams(group1.WomanTeams, group2.WomanTeams, final._womanTeams, size / 2, ref final._womanCount);
 
                 return final;
             }
-            public static void MergeTeams(Team[] team1, Team[] team2, Team[] finalGroup, int size)
-            {
-                
-                
-                int index1 = 0, index2 = 0, itog=0;
 
-                while (index1 < size && index2< size)
+            private static void MergeTeams(Team[] team1, Team[] team2, Team[] finalGroup, int size, ref int count)
+            {
+                int index1 = 0, index2 = 0;
+                count = 0;
+
+                while (index1 < size && index2 < size && count < finalGroup.Length)
                 {
-                    if (team1[index1].TotalScore >= team2[index2].TotalScore)
+                    if (team1[index1]?.TotalScore >= team2[index2]?.TotalScore)
                     {
-                        finalGroup[itog++] = team1[index1++];
+                        finalGroup[count++] = team1[index1++];
                     }
                     else
                     {
-                        finalGroup[itog++] = team2[index2++];
+                        finalGroup[count++] = team2[index2++];
                     }
-                    
                 }
 
-                while (index1<size)
+                while (index1 < size && count < finalGroup.Length)
                 {
-                    finalGroup[itog++] = team1[index1++];
-
+                    finalGroup[count++] = team1[index1++];
                 }
 
-                while (index2<size)
+                while (index2 < size && count < finalGroup.Length)
                 {
-                    finalGroup[itog++] = team2[index2++];
-
+                    finalGroup[count++] = team2[index2++];
                 }
-
             }
 
             public void Print()
