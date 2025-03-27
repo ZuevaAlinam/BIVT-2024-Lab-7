@@ -38,7 +38,7 @@ namespace Lab_7
 
             public void Jump(int[] result)
             {
-                if (result == null || _globalI > 1 || result.Length != 5) return;
+                if (result == null || _globalI > 1 || result.Length != 0 || _marks==null) return;
 
                 for (int j = 0; j < 5; j++)
                 {
@@ -49,7 +49,7 @@ namespace Lab_7
 
             public static void Sort(Participant[] array)
             {
-                if (array == null) return;
+                if (array == null || array.Length ==0) return;
                 for (int i = 0; i < array.Length - 1; i++)
                 {
                     for (int j = 0; j < array.Length - i - 1; j++)
@@ -96,16 +96,14 @@ namespace Lab_7
 
             public void Add(Participant participant)
             {
-                if (_count == _participants.Length)
-                {
-                    Array.Resize(ref _participants, _count + 1);
-                }
-                _participants[_count++] = participant;
+                if (_participants == null) return;
+                Array.Resize(ref _participants, _count+1);
+                _participants[_participants.Length] = participant;
             }
 
             public void Add(Participant[] participants)
             {
-                if (participants == null) return;
+                if (participants == null || participants.Length==0) return;
 
                 foreach (var p in participants)
                 {
@@ -122,7 +120,7 @@ namespace Lab_7
             {
                 get
                 {
-                    if (Participants.Length < 3) return null;
+                    if (Participants == null || Participants.Length < 3) return null;
                     return new double[]
                     {
                         0.5 * Bank,
@@ -141,23 +139,21 @@ namespace Lab_7
             {
                 get
                 {
-                    int count = Participants.Length;
-                    if (count < 3) return null;
-
-                    int topCount = count / 2;
-                    if (topCount < 3) topCount = 3;
+                    if (Participants == null || Participants.Length < 3) return null;
+                    int topCount = Participants.Length/2;
                     if (topCount > 10) topCount = 10;
+                    else if (topCount < 3) return null;
 
                     double[] prizes = new double[topCount];
-                    double n = 20.0 / topCount;
+                    double bonus = (0.2 * Bank) / topCount;
 
-                    prizes[0] = 0.4 * Bank + n / 100 * Bank;
-                    prizes[1] = 0.25 * Bank + n / 100 * Bank;
-                    prizes[2] = 0.15 * Bank + n / 100 * Bank;
+                    prizes[0] = 0.4 * Bank + bonus;
+                    prizes[1] = 0.25 * Bank + bonus;
+                    prizes[2] = 0.15 * Bank + bonus;
 
                     for (int i = 3; i < topCount; i++)
                     {
-                        prizes[i] = n / 100 * Bank;
+                        prizes[i] = bonus;
                     }
 
                     return prizes;
