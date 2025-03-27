@@ -56,42 +56,29 @@ namespace Lab_7
         public class Group
         {
             private string _name;
-            private Team[] _manTeams;
-            private Team[] _womanTeams;
+            private ManTeam[] _manTeams;
+            private WomanTeam[] _womanTeams;
             private int _manCount;
             private int _womanCount;
 
             public string Name => _name;
-            public Team[] ManTeams
-            {
-                get
-                {
-                    if (_manTeams == null)
-                        return null;
-                    return _manTeams.Take(_manCount).ToArray();
-                }
-            }
-            public Team[] WomanTeams
-            {
-                get
-                {
-                    if (_womanTeams == null)
-                        return null;
-                    return _womanTeams.Take(_womanCount).ToArray();
-                }
-            }
+            public ManTeam[] ManTeams => _manTeams;
+           
+            public WomanTeam[] WomanTeams => _womanTeams;
+            
 
             public Group(string name)
             {
                 _name = name;
-                _manTeams = new Team[12];
-                _womanTeams = new Team[12];
+                _manTeams = new ManTeam[12];
+                _womanTeams = new WomanTeam[12];
                 _manCount = 0;
                 _womanCount = 0;
             }
 
             public void Add(Team team)
             {
+                if (team == null) return;
                 if (team is ManTeam manTeam && _manCount < _manTeams.Length)
                 {
                     _manTeams[_manCount++] = manTeam;
