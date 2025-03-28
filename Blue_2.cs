@@ -38,7 +38,7 @@ namespace Lab_7
 
             public void Jump(int[] result)
             {
-                if (result == null || _globalI > 1 || result.Length != 0 || _marks==null) return;
+                if (result == null || _globalI > 1 || _marks==null) return;
 
                 for (int j = 0; j < 5; j++)
                 {
@@ -98,7 +98,7 @@ namespace Lab_7
             {
                 if (_participants == null) return;
                 Array.Resize(ref _participants, _count+1);
-                _participants[_participants.Length] = participant;
+                _participants[_participants.Length-1] = participant;
             }
 
             public void Add(Participant[] participants)
