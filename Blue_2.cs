@@ -99,6 +99,7 @@ namespace Lab_7
                 if (_participants == null) return;
                 Array.Resize(ref _participants, _participants.Length+1);
                 _participants[_participants.Length-1] = participant;
+                _count++;
             }
 
             public void Add(Participant[] participants)
